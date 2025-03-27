@@ -1,0 +1,45 @@
+Input
+Store amount
+
+for, 	Load amount
+		Skipcond 800 /amount<0?
+		Halt
+
+		Subt ONE
+		Store amount
+		Jump read
+
+		read,	Input
+				Store m
+
+				Input
+				Store n
+
+				Load m
+				Add ONE
+				Store i
+
+		while, 	Load i
+				Subt n
+				Skipcond 800 	/i>800?
+				Jump summation
+				Jump result
+
+		summation,	Load m
+					Add i
+					Store m
+					Load i
+					Add ONE
+					Store i
+					Jump while
+
+		result,	Load m
+				Output
+				Jump for
+
+
+amount, dec 11
+m, dec 22
+n, dec 33
+i, dec 44
+ONE, dec 1

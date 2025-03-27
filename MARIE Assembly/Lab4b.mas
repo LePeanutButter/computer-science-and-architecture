@@ -1,0 +1,185 @@
+Input
+Store amount
+
+for,    Load amount
+		Skipcond 800 /amount<0?
+		Halt
+
+        Subt ONE
+		Store amount
+		Jump read
+
+        read,   Clear
+                Store TEMP
+                Load ZERO
+                Store BelgiumPassengers
+                Store EnglandPassengers
+                Store NorwayPassengers
+                Store IrelandPassengers
+                Store FrancePassengers
+                Store total
+                Input
+                Store Belgium
+                Input
+                Store England
+                Input
+                Store Norway
+                Input
+                Store Ireland
+                Input
+                Store France
+
+                Load Belgium
+                Store MCD
+                Load England
+                Store MIN
+
+        mcdCalc, 	Load MCD
+                    Subt MIN
+                    SkipCond 400
+                    Jump mcdRecursion
+                    Jump minChange
+
+        mcdRecursion,   SkipCond 800
+                        Jump invertMin
+                        Store MCD
+                        Jump mcdCalc
+
+        invertMin, 	Load MCD
+                    Store TEMP
+                    Load MIN
+                    Store MCD
+                    Load TEMP
+                    Store MIN
+                    Jump mcdCalc
+                        
+        minChange,	Load COUNT
+                    Subt ONE
+                    SkipCond 800
+                    Jump bpassengers
+                    Jump norwayNext
+
+        norwayNext, Load COUNT
+                    Subt THREE
+                    SkipCond 400
+                    Jump irelandNext
+                    Jump setNorway
+
+        irelandNext,    Load COUNT
+                        Subt TWO
+                        SkipCond 400
+                        Jump setFrance
+                        Jump setIreland
+
+        setNorway,	Load Norway
+                    Store MIN
+                    Jump countReduce
+                    
+        setIreland,	Load Ireland
+                    Store MIN
+                    Jump countReduce
+
+        setFrance,	Load France
+                    Store MIN
+                    Jump countReduce
+
+        countReduce,	Load COUNT
+                        Subt ONE
+                        Store COUNT
+                        Jump mcdCalc
+                    
+        bpassengers, 	Load Belgium
+                        SkipCond 800
+                        Jump epassengers
+                        Subt MCD
+                        Store Belgium
+                        Load BelgiumPassengers
+                        Add ONE
+                        Store BelgiumPassengers
+                        Jump bpassengers
+
+        epassengers,    Load England
+                        SkipCond 800
+                        Jump npassengers
+                        Subt MCD
+                        Store England
+                        Load EnglandPassengers
+                        Add ONE
+                        Store EnglandPassengers
+                        Jump epassengers
+
+        npassengers,    Load Norway
+                        SkipCond 800
+                        Jump ipassengers
+                        Subt MCD
+                        Store Norway
+                        Load NorwayPassengers
+                        Add ONE
+                        Store NorwayPassengers
+                        Jump npassengers
+
+        ipassengers,    Load Ireland
+                        SkipCond 800
+                        Jump fpassengers
+                        Subt MCD
+                        Store Ireland
+                        Load IrelandPassengers
+                        Add ONE
+                        Store IrelandPassengers
+                        Jump ipassengers
+
+        fpassengers,    Load France
+                        SkipCond 800
+                        Jump totalPassengers
+                        Subt MCD
+                        Store France
+                        Load FrancePassengers
+                        Add ONE
+                        Store FrancePassengers
+                        Jump fpassengers
+
+        totalPassengers,    Load total
+                            Add BelgiumPassengers
+                            Add EnglandPassengers
+                            Add NorwayPassengers
+                            Add IrelandPassengers
+                            Add FrancePassengers
+                            Store total
+                            Jump end
+
+        end,    Load MCD
+                Output
+                Load BelgiumPassengers
+                Output
+                Load EnglandPassengers
+                Output
+                Load NorwayPassengers
+                Output
+                Load IrelandPassengers
+                Output
+                Load FrancePassengers
+                Output
+                Load total
+                Output
+                Jump for
+
+amount, DEC 0
+Belgium, DEC 0
+England, DEC 0
+Norway, DEC 0
+Ireland, DEC 0
+France, DEC 0
+MCD, DEC 0
+MIN, DEC 0
+BelgiumPassengers, DEC 0
+EnglandPassengers, DEC 0
+NorwayPassengers, DEC 0
+IrelandPassengers, DEC 0
+FrancePassengers, DEC 0
+total, DEC 0
+TEMP, DEC 0
+COUNT, DEC 3
+ZERO, DEC 0
+ONE, DEC 1
+TWO, DEC 2
+THREE, DEC 3

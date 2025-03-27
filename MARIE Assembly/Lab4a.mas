@@ -1,0 +1,157 @@
+Clear
+Store XX
+Clear
+Store AXX
+Clear
+Store BX
+Input
+Store A
+Input
+Store B
+Input
+Store C
+Input
+Store X
+Store X2
+
+Clear
+Store XX
+
+Load X2
+Skipcond 000
+Jump nonnegX2
+
+Subt X2
+Subt X2
+Store X2
+Clear
+Add ONE
+Store negflagX2
+Clear
+Jump loopX2
+
+nonnegX2,   Clear
+            Store negflagX2
+            Load X2
+            Skipcond 400
+            Jump loopX2
+            Jump AXXCalculation
+
+loopX2, Load XX
+        Add X
+        Store XX
+
+        Load X2
+        Subt ONE
+        Store X2
+
+        Skipcond 400 
+        Jump loopX2
+
+Load negflagX2
+Skipcond 800
+Jump AXXCalculation
+
+Load XX
+Subt XX
+Subt XX
+Store XX
+
+AXXCalculation, Load XX
+                Skipcond 000
+                Jump nonnegAXX
+
+                Subt XX
+                Subt XX
+                Store XX
+                Clear
+                Add ONE
+                Store negflagAXX
+                Clear
+                Jump loopAXX
+
+nonnegAXX,  Clear
+            Store negflagAXX
+            Load XX
+            Skipcond 400
+            Jump loopAXX
+            Jump BXCalculation
+
+loopAXX,    Load AXX
+            Add A
+            Store AXX
+
+            Load XX
+            Subt ONE
+            Store XX
+
+            Skipcond 400
+            Jump loopAXX
+
+Load negflagAXX
+Skipcond 800
+Jump BXCalculation
+
+Load AXX
+Subt AXX
+Subt AXX
+Store AXX
+
+BXCalculation,  Load B
+                Skipcond 000
+                Jump nonnegBX
+
+                Subt B
+                Subt B
+                Store B
+                Clear
+                Add ONE
+                Store negflagBX
+                Clear
+                Jump loopBX
+
+nonnegBX,   Clear
+            Store negflagBX
+            Load B
+            Skipcond 400
+            Jump loopBX
+            Jump halt 
+
+loopBX, Load BX
+        Add X
+        Store BX
+
+        Load B
+        Subt ONE
+        Store B
+
+        Skipcond 400
+        Jump loopBX
+
+Load negflagBX
+Skipcond 800
+Jump halt
+
+Load BX
+Subt BX
+Subt BX
+Store BX
+
+halt,   Load AXX
+        Add BX
+        Add C
+        Output
+        Halt
+
+A, DEC 0
+B, DEC 0
+C, DEC 0
+X, DEC 0
+X2, DEC 0
+ONE, DEC 1
+negflagX2, DEC 0
+negflagAXX, DEC 0
+negflagBX, DEC 0
+XX, DEC 0
+AXX, DEC 0
+BX, DEC 0

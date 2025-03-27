@@ -1,0 +1,69 @@
+Input
+Store amount
+
+for, 	Load amount
+		Skipcond 800 /amount<0?
+		Halt
+
+		Subt ONE
+		Store amount
+		Jump read
+
+		read,   Input
+				Store a
+
+				Input
+				Store b
+
+                Input
+				Store c
+
+                Load a
+                Subt b
+                Skipcond 800
+                Jump setFirstA
+                Jump setFirstB
+
+        setFirstA,  Load a
+                    Store min
+                    Load b
+                    Store max
+                    Jump cPlacement
+
+        setFirstB,  Load b
+                    Store min
+                    Load a
+                    Store max
+                    Jump cPlacement
+
+        cPlacement, Load max
+                    Subt c
+                    Skipcond 800
+                    Jump setCMax
+                    Jump cPlacementBelow
+
+        cPlacementBelow,    Load min
+                            Subt c
+                            Skipcond 800
+                            Jump print
+                            Jump setCMin
+        setCMin,    Load c
+                    Store min
+                    Jump print 
+
+        setCMax,    Load c
+                    Store max
+                    Jump print
+        
+        print,  Load min
+                Add max
+                Output
+                Jump for
+
+amount, dec 11
+a, dec 22
+b, dec 33
+c, dec 44
+min, dec 55
+max, dec 66
+ONE, dec 1

@@ -1,0 +1,165 @@
+Input
+Store amount
+
+for, 	Load amount
+		Skipcond 800 /amount<0?
+		Halt
+
+		Subt ONE
+		Store amount
+		Jump read
+
+		read,	Clear
+                Store AC
+
+                Clear
+                Store B2
+
+                Clear
+                Store ACF
+
+                Input
+                Store A
+
+                Input
+                Store B
+
+                Load B
+                Store X
+
+                Input
+                Store C
+
+                Load B
+                Skipcond 000
+                Jump nonnegB
+
+                Subt B
+                Subt B
+                Store B
+                Clear
+                Add ONE
+                Store negflagB
+                Clear
+                Jump loopB
+
+        nonnegB,  Clear
+                Store negflagB
+                Load B
+                Skipcond 400
+                Jump loopB
+                Jump halt
+
+        loopB,    Load B2
+                Add X
+                Store B2
+
+                Load B
+                Subt ONE
+                Store B
+            
+                Skipcond 400
+                Jump loopB
+
+        Load negflagB
+        Skipcond 800
+        Jump ac_preparation
+
+        Load B2
+        Subt B2
+        Subt B2
+        Store B2
+
+        ac_preparation, Load C
+                        Skipcond 000
+                        Jump nonnegAC
+
+                        Subt C
+                        Subt C
+                        Store C
+                        Clear
+                        Add ONE
+                        Store negflagAC
+                        Clear
+                        Jump loopAC
+
+        nonnegAC,   Clear
+                    Store negflagAC
+                    Load C
+                    Skipcond 400
+                    Jump loopAC
+                    Jump variables_preparation
+
+        loopAC, Load AC
+                Add A
+                Store AC
+
+                Load C
+                Subt ONE
+                Store C
+            
+                Skipcond 400
+                Jump loopAC
+
+        Load negflagAC
+        Skipcond 800
+        Jump variables_preparation
+
+        Load AC
+        Subt AC
+        Subt AC
+        Store AC
+
+        variables_preparation,  Load AC
+                                Store ACF
+
+                                Load FOUR
+                                Store REP
+
+        fourth_loop, Load REP
+                Subt ONE
+                Store REP
+                Skipcond 800
+                Jump halt
+                Load ACF
+                Add AC
+                Store ACF
+                Jump fourth_loop
+
+        halt,   Load B2
+                Subt ACF
+                Skipcond 400
+                Jump nonzero
+                Jump ONE_ROOT
+
+        nonzero,    Skipcond 800
+                    Jump ZERO_ROOT
+                    Jump TWO_ROOT
+
+        ZERO_ROOT,  Load ZERO
+                    Output
+                    Jump for
+
+        ONE_ROOT,   Load ONE
+                    Output
+                    Jump for
+
+        TWO_ROOT,   Load TWO
+                    Output
+                    Jump for
+
+amount, DEC 11
+A, DEC 22
+B, DEC 33
+C, DEC 44
+B2, DEC 0
+AC, DEC 0
+ACF, DEC 0
+X, DEC 0
+REP, DEC 0
+ZERO, DEC 0
+ONE, DEC 1
+TWO, DEC 2
+FOUR, DEC 4
+negflagB, DEC 0
+negflagAC, DEC 0
