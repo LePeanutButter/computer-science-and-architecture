@@ -1,0 +1,163 @@
+/ MARIE Assembly Program - Egyptian Fraction Decomposition
+/ Given a fraction A / B, this program uses Sylvester’s greedy algorithm
+/ to compute the Egyptian Fraction representation by outputting the denominators
+/ of the unit fractions that sum up to A / B.
+
+Input	/ Read number of test cases
+Store amount
+
+loop, 	Load amount
+		SkipCond 800	/ If amount < 0, stop
+		Jump endLoop
+		Subt ONE
+		Store amount
+		
+		Input	/ Read numerator
+		Store A
+		Store tempA
+
+		Input	/ Read denominator
+		Store B
+		Store tempB
+
+setMCDVariables, 	Load A	/ Begin GCD computation to reduce the fraction
+					Store MCD
+					Load B
+					Store MIN
+
+mcdCalcOriginal, 	Load MCD
+					Subt MIN
+					SkipCond 400	/ If MCD < MIN, swap
+					Jump mcdRecursionOriginal
+					Jump numeratorFractionOriginal
+
+mcdRecursionOriginal,   SkipCond 800	/ If result negative, swap values
+                        Jump invertMinOriginal
+                        Store MCD
+                        Jump mcdCalcOriginal
+
+invertMinOriginal, 	Load MCD
+					Store TEMP
+					Load MIN
+					Store MCD
+					Load TEMP
+					Store MIN
+					Jump mcdCalcOriginal
+
+numeratorFractionOriginal, 	Load A	/ Count how many times MCD divides into A (numerator)
+							SkipCond 800
+							Jump denominatorFractionOriginal
+							Subt MCD
+							Store A
+							Load ACOUNT
+							Add ONE
+							Store ACOUNT
+							Jump numeratorFractionOriginal
+
+denominatorFractionOriginal, 	Load B	/ Count how many times MCD divides into B (denominator)
+								SkipCond 800
+								Jump fractionReduceOriginal
+								Subt MCD
+								Store B
+								Load BCOUNT
+								Add ONE
+								Store BCOUNT
+								Jump denominatorFractionOriginal
+
+fractionReduceOriginal, Load ACOUNT	/ Use reduced A and B values
+                        Store A
+						Store tempA
+                        Load BCOUNT
+                        Store B
+						Store tempB
+                        Clear
+                        Store TEMP
+                        Store ACOUNT
+                        Store BCOUNT
+                        Store MCD
+                        Store MIN
+						Store AC
+						Store BC
+						Store COEFICIENT
+
+division, 	Load tempB	/ Division loop: how many times A divides into B (greedy step)
+			Subt tempA
+			SkipCond 800
+			Jump isZero
+			Store tempB
+			Load COEFICIENT
+			Add ONE
+			Store COEFICIENT
+			Jump division
+
+isZero, SkipCond 400	/ If division ends exactly, output this as next unit fraction
+		Jump ACcalc
+		Load COEFICIENT
+		Add ONE
+		Store COEFICIENT
+		Jump end
+
+ACcalc, Load B	/ Begin computation for next term in Egyptian fraction
+		Store tempB
+		Load COEFICIENT
+		Add ONE
+		Store COEFICIENT
+		Load COEFICIENT
+		Output	/ Output current denominator
+
+multiplyAC,	Load tempA	/ Calculate A = A - B
+			SkipCond 800
+			Jump numerator
+			Subt ONE
+			Store tempA
+			Load AC
+			Add COEFICIENT
+			Store AC
+			Jump multiplyAC
+
+numerator,	Load AC
+			Subt B
+			Store A
+			Jump multiplyBC
+
+multiplyBC, Load tempB	/ Calculate B = B * current coefficient
+			SkipCond 800
+			Jump clearVariables
+			Subt ONE
+			Store tempB
+			Load BC
+			Add COEFICIENT
+			Store BC
+			Jump multiplyBC
+
+clearVariables,	Load A	/ Prepare for next iteration
+				Store tempA
+				Load BC
+				Store B
+				Store tempB		
+				Jump setMCDVariables
+		
+end, 	Load COEFICIENT	/ End of case: output final denominator and a line with 0
+		Output
+		Load ZERO
+		Output
+		Store COEFICIENT	/ Reset for next case
+		Jump loop
+
+endLoop, Halt
+
+amount,        DEC 0       / Number of test cases
+A,             DEC 0       / Numerator
+B,             DEC 0       / Denominator
+AC,            DEC 0       / Temp for numerator in next step
+BC,            DEC 0       / Temp for denominator in next step
+tempA,         DEC 0       / Temp storage for A
+tempB,         DEC 0       / Temp storage for B
+TEMP,          DEC 0       / General temporary register
+ACOUNT,        DEC 0       / Count of MCD in A
+BCOUNT,        DEC 0       / Count of MCD in B
+MCD,           DEC 0       / Greatest common divisor
+MIN,           DEC 0       / Used in GCD swap logic
+COEFICIENT,    DEC 0       / Current coefficient (denominator of unit fraction)
+ZERO,          DEC 0
+ONE,           DEC 1

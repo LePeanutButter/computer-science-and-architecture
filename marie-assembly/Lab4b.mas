@@ -1,15 +1,20 @@
-Input
+/ MARIE Assembly Program - Equal Plane Capacity for Multiple Destinations
+/ Given the number of passengers traveling to Belgium, England, Norway, Ireland, and France,
+/ the program computes the maximum number of passengers per plane (using the GCD of all numbers)
+/ and calculates how many planes go to each country and the total number of planes.
+
+Input   / Read number of test cases
 Store amount
 
 for,    Load amount
-		Skipcond 800 /amount<0?
+		Skipcond 800 / If amount < 0, halt
 		Halt
 
         Subt ONE
 		Store amount
 		Jump read
 
-        read,   Clear
+        read,   Clear   / Reset counters
                 Store TEMP
                 Load ZERO
                 Store BelgiumPassengers
@@ -18,7 +23,8 @@ for,    Load amount
                 Store IrelandPassengers
                 Store FrancePassengers
                 Store total
-                Input
+
+                Input   / Read passengers for each country
                 Store Belgium
                 Input
                 Store England
@@ -29,18 +35,18 @@ for,    Load amount
                 Input
                 Store France
 
-                Load Belgium
+                Load Belgium    / Initialize MCD (GCD) calculation
                 Store MCD
                 Load England
                 Store MIN
 
-        mcdCalc, 	Load MCD
+        mcdCalc, 	Load MCD    / Begin MCD loop
                     Subt MIN
-                    SkipCond 400
+                    SkipCond 400    / If MCD < MIN, switch
                     Jump mcdRecursion
-                    Jump minChange
+                    Jump minChange  / If MCD = MIN, go to next number
 
-        mcdRecursion,   SkipCond 800
+        mcdRecursion,   SkipCond 800    / If result is negative, invert
                         Jump invertMin
                         Store MCD
                         Jump mcdCalc
@@ -53,10 +59,10 @@ for,    Load amount
                     Store MIN
                     Jump mcdCalc
                         
-        minChange,	Load COUNT
+        minChange,	Load COUNT  / Move to next country for MCD
                     Subt ONE
                     SkipCond 800
-                    Jump bpassengers
+                    Jump bpassengers    / Start assigning passengers to planes
                     Jump norwayNext
 
         norwayNext, Load COUNT
@@ -88,8 +94,8 @@ for,    Load amount
                         Store COUNT
                         Jump mcdCalc
                     
-        bpassengers, 	Load Belgium
-                        SkipCond 800
+        bpassengers, 	Load Belgium    / Distribute passengers for Belgium
+                        SkipCond 800    / If Belgium = 0, move on
                         Jump epassengers
                         Subt MCD
                         Store Belgium
@@ -99,7 +105,7 @@ for,    Load amount
                         Jump bpassengers
 
         epassengers,    Load England
-                        SkipCond 800
+                        SkipCond 800    / Distribute passengers for England
                         Jump npassengers
                         Subt MCD
                         Store England
@@ -108,7 +114,7 @@ for,    Load amount
                         Store EnglandPassengers
                         Jump epassengers
 
-        npassengers,    Load Norway
+        npassengers,    Load Norway     / Distribute passengers for Norway
                         SkipCond 800
                         Jump ipassengers
                         Subt MCD
@@ -118,7 +124,7 @@ for,    Load amount
                         Store NorwayPassengers
                         Jump npassengers
 
-        ipassengers,    Load Ireland
+        ipassengers,    Load Ireland    / Distribute passengers for Ireland
                         SkipCond 800
                         Jump fpassengers
                         Subt MCD
@@ -128,7 +134,7 @@ for,    Load amount
                         Store IrelandPassengers
                         Jump ipassengers
 
-        fpassengers,    Load France
+        fpassengers,    Load France     / Distribute passengers for France
                         SkipCond 800
                         Jump totalPassengers
                         Subt MCD
@@ -138,7 +144,7 @@ for,    Load amount
                         Store FrancePassengers
                         Jump fpassengers
 
-        totalPassengers,    Load total
+        totalPassengers,    Load total  / Calculate total planes
                             Add BelgiumPassengers
                             Add EnglandPassengers
                             Add NorwayPassengers
@@ -147,39 +153,39 @@ for,    Load amount
                             Store total
                             Jump end
 
-        end,    Load MCD
-                Output
+        end,    Load MCD    / Output results
+                Output  / Passengers per plane
                 Load BelgiumPassengers
-                Output
+                Output   / Planes to Belgium
                 Load EnglandPassengers
-                Output
+                Output  / Planes to England
                 Load NorwayPassengers
-                Output
+                Output  / Planes to Norway
                 Load IrelandPassengers
-                Output
+                Output  / Planes to Ireland
                 Load FrancePassengers
-                Output
+                Output  / Planes to France
                 Load total
-                Output
+                Output  / Total planes
                 Jump for
 
-amount, DEC 0
-Belgium, DEC 0
-England, DEC 0
-Norway, DEC 0
-Ireland, DEC 0
-France, DEC 0
-MCD, DEC 0
-MIN, DEC 0
-BelgiumPassengers, DEC 0
-EnglandPassengers, DEC 0
-NorwayPassengers, DEC 0
-IrelandPassengers, DEC 0
-FrancePassengers, DEC 0
-total, DEC 0
-TEMP, DEC 0
-COUNT, DEC 3
-ZERO, DEC 0
-ONE, DEC 1
-TWO, DEC 2
-THREE, DEC 3
+amount,              DEC 0
+Belgium,             DEC 0
+England,             DEC 0
+Norway,              DEC 0
+Ireland,             DEC 0
+France,              DEC 0
+MCD,                 DEC 0        / Greatest Common Divisor
+MIN,                 DEC 0        / Temporary minimum in GCD
+BelgiumPassengers,   DEC 0
+EnglandPassengers,   DEC 0
+NorwayPassengers,    DEC 0
+IrelandPassengers,   DEC 0
+FrancePassengers,    DEC 0
+total,               DEC 0
+TEMP,                DEC 0
+COUNT,               DEC 3        / Counter for GCD across 5 countries
+ZERO,                DEC 0
+ONE,                 DEC 1
+TWO,                 DEC 2
+THREE,               DEC 3

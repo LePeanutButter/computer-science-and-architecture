@@ -1,29 +1,33 @@
+/ MARIE Assembly Program - Polynomial Evaluator
+/ This program evaluates the polynomial a * x^2 + b * x + c
+/ Given a, b, c, and x as input, it computes and outputs the result.
+
 Clear
-Store XX
+Store XX        / XX = 0, will store x^2
 Clear
-Store AXX
+Store AXX       / AXX = 0, will store a * x^2
 Clear
-Store BX
-Input
+Store BX        / BX = 0, will store b * x
+Input           / Read coefficient a
 Store A
-Input
+Input           / Read coefficient b
 Store B
-Input
+Input           / Read constant c
 Store C
 Input
-Store X
-Store X2
+Store X         / Read value of x
+Store X2        / Copy X into X2 for squaring
 
 Clear
-Store XX
+Store XX        / Reset XX = 0 before squaring
 
-Load X2
+Load X2         / Start squaring X: XX = X * X
 Skipcond 000
-Jump nonnegX2
+Jump nonnegX2   / If X >= 0, jump to loop
 
 Subt X2
 Subt X2
-Store X2
+Store X2        / Convert X2 to positive
 Clear
 Add ONE
 Store negflagX2
@@ -57,7 +61,7 @@ Subt XX
 Subt XX
 Store XX
 
-AXXCalculation, Load XX
+AXXCalculation, Load XX / Compute AXX = A * XX (i.e., a * x^2)
                 Skipcond 000
                 Jump nonnegAXX
 
@@ -97,7 +101,7 @@ Subt AXX
 Subt AXX
 Store AXX
 
-BXCalculation,  Load B
+BXCalculation,  Load B  / Compute BX = B * X
                 Skipcond 000
                 Jump nonnegBX
 
@@ -137,21 +141,21 @@ Subt BX
 Subt BX
 Store BX
 
-halt,   Load AXX
+halt,   Load AXX        / Final calculation: AXX + BX + C
         Add BX
         Add C
         Output
         Halt
 
-A, DEC 0
-B, DEC 0
-C, DEC 0
-X, DEC 0
-X2, DEC 0
-ONE, DEC 1
-negflagX2, DEC 0
-negflagAXX, DEC 0
-negflagBX, DEC 0
-XX, DEC 0
-AXX, DEC 0
-BX, DEC 0
+A,          DEC 0     / Coefficient a
+B,          DEC 0     / Coefficient b
+C,          DEC 0     / Constant c
+X,          DEC 0     / Value of x
+X2,         DEC 0     / Copy of x for squaring
+ONE,        DEC 1     / Constant 1
+negflagX2,  DEC 0     / Negative flag for X2
+negflagAXX, DEC 0     / Negative flag for AXX
+negflagBX,  DEC 0     / Negative flag for BX
+XX,         DEC 0     / x^2
+AXX,        DEC 0     / a * x^2
+BX,         DEC 0     / b * x

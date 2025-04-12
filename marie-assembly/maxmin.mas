@@ -1,0 +1,72 @@
+/ MARIE Assembly Program - Sum of Minimum and Maximum of Three Numbers
+/ For each test case (3 integers), this program outputs the sum of the smallest and the largest value.
+
+Input   / Read the number of test cases
+Store amount
+
+for, 	Load amount
+		Skipcond 800 / If amount < 0, halt
+		Halt
+
+		Subt ONE
+		Store amount
+		Jump read
+
+		read,   Input   / Read first number: a
+				Store a
+
+				Input   / Read second number: b
+				Store b
+
+                Input   / Read third number: c
+				Store c
+
+                Load a 
+                Subt b
+                Skipcond 800    / If a < b, go to setFirstA
+                Jump setFirstA
+                Jump setFirstB  / Else, setFirstB (a >= b)
+
+        setFirstA,  Load a  / Set a as min, b as max
+                    Store min
+                    Load b
+                    Store max
+                    Jump cPlacement
+
+        setFirstB,  Load b  / Set b as min, a as max
+                    Store min
+                    Load a
+                    Store max
+                    Jump cPlacement
+
+        cPlacement, Load max
+                    Subt c
+                    Skipcond 800    / If c < max, check if it should be min
+                    Jump setCMax    / Else, c is the new max
+                    Jump cPlacementBelow
+
+        cPlacementBelow,    Load min    / Check if c should be new min
+                            Subt c
+                            Skipcond 800    / If c < min, c is new min
+                            Jump print      / Else, keep existing min
+                            Jump setCMin
+        setCMin,    Load c  / Set c as new minimum
+                    Store min
+                    Jump print 
+
+        setCMax,    Load c  / Set c as new maximum
+                    Store max
+                    Jump print
+        
+        print,  Load min    / Print result: min + max
+                Add max
+                Output      / Output result
+                Jump for    / Go to next test case
+
+amount, DEC 11
+a,      DEC 22
+b,      DEC 33
+c,      DEC 44
+min,    DEC 55
+max,    DEC 66
+ONE,    DEC 1

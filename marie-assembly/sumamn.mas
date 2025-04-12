@@ -1,0 +1,49 @@
+/ MARIE Assembly Program - Sum from m to n (inclusive)
+/ For each test case, this program reads two integers m and n (with m ≤ n)
+/ and calculates the sum of the range [m, n].
+
+Input
+Store amount
+
+for, 	Load amount
+		Skipcond 800					/ Check if amount < 0 (no more cases to process)
+		Halt							/ Stop the program if no cases left
+
+		Subt ONE						/ Decrement the number of cases
+		Store amount
+		Jump read
+
+		read,	Input					/ Read the start of the range (m)
+				Store m
+
+				Input					/ Read the end of the range (n)
+				Store n
+
+				Load m
+				Add ONE
+				Store i
+
+		while, 	Load i
+				Subt n
+				Skipcond 800 			/ Skip if i > n (end of the range)
+				Jump summation			/ If i ≤ n, jump to summation process
+				Jump result				/ If i > n, jump to output the result
+
+		summation,	Load m
+					Add i
+					Store m
+					Load i
+					Add ONE
+					Store i
+					Jump while			/ Jump back to the 'while' loop to continue
+
+		result,	Load m
+				Output
+				Jump for				/ Jump back to the 'for' loop to process the next case
+
+
+amount, dec 11    / Total number of test cases to process
+m, dec 22         / Starting value of the range
+n, dec 33         / Ending value of the range
+i, dec 44         / Iterator for summation
+ONE, dec 1        / Constant value (1) for increment operations

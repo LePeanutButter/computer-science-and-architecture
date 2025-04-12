@@ -1,15 +1,22 @@
+/ MARIE Assembly Program - Quadratic Equation Root Counter
+/ This program determines the number of real roots for a quadratic equation: ax^2 + bx + c = 0
+/ It reads coefficients a, b, and c from standard input, and outputs:
+/   - 0 if there are no real roots,
+/   - 1 if there is one real root,
+/   - 2 if there are two real roots.
+
 Input
-Store amount
+Store amount    / Store the number of test cases
 
 for, 	Load amount
-		Skipcond 800 /amount<0?
-		Halt
+        Skipcond 800 / If amount < 0, finish
+        Halt
 
-		Subt ONE
-		Store amount
-		Jump read
+        Subt ONE
+        Store amount
+        Jump read       / Read the next test case
 
-		read,	Clear
+        read,	Clear
                 Store AC
 
                 Clear
@@ -18,10 +25,10 @@ for, 	Load amount
                 Clear
                 Store ACF
 
-                Input
+                Input   / Read coefficient A
                 Store A
 
-                Input
+                Input   / Read coefficient B
                 Store B
 
                 Load B
@@ -30,7 +37,7 @@ for, 	Load amount
                 Input
                 Store C
 
-                Load B
+                Load B  / Handle possible negative B (needed for squaring)
                 Skipcond 000
                 Jump nonnegB
 
@@ -43,14 +50,14 @@ for, 	Load amount
                 Clear
                 Jump loopB
 
-        nonnegB,  Clear
+        nonnegB,Clear
                 Store negflagB
                 Load B
                 Skipcond 400
                 Jump loopB
                 Jump halt
 
-        loopB,    Load B2
+        loopB,  Load B2 / Square B and store in B2
                 Add X
                 Store B2
 
@@ -61,16 +68,16 @@ for, 	Load amount
                 Skipcond 400
                 Jump loopB
 
-        Load negflagB
-        Skipcond 800
-        Jump ac_preparation
+                Load negflagB   / If B was negative, correct B2 sign
+                Skipcond 800
+                Jump ac_preparation
 
-        Load B2
-        Subt B2
-        Subt B2
-        Store B2
+                Load B2
+                Subt B2
+                Subt B2
+                Store B2
 
-        ac_preparation, Load C
+        ac_preparation, Load C  / Prepare to compute 4ac
                         Skipcond 000
                         Jump nonnegAC
 
@@ -90,7 +97,7 @@ for, 	Load amount
                     Jump loopAC
                     Jump variables_preparation
 
-        loopAC, Load AC
+        loopAC, Load AC / Multiply a * c and store in AC
                 Add A
                 Store AC
 
@@ -111,12 +118,12 @@ for, 	Load amount
         Store AC
 
         variables_preparation,  Load AC
-                                Store ACF
+                                Store ACF       / Save a*c result
 
                                 Load FOUR
-                                Store REP
+                                Store REP       / REP = 4 for 4ac
 
-        fourth_loop, Load REP
+        fourth_loop, Load REP   / Multiply a*c by 4 and store in ACF
                 Subt ONE
                 Store REP
                 Skipcond 800
@@ -126,15 +133,15 @@ for, 	Load amount
                 Store ACF
                 Jump fourth_loop
 
-        halt,   Load B2
+        halt,   Load B2 / Calculate discriminant: B^2 - 4ac
                 Subt ACF
                 Skipcond 400
                 Jump nonzero
                 Jump ONE_ROOT
 
         nonzero,    Skipcond 800
-                    Jump ZERO_ROOT
-                    Jump TWO_ROOT
+                    Jump ZERO_ROOT      / Discriminant < 0 → No real roots
+                    Jump TWO_ROOT       / Discriminant > 0 → Two real roots
 
         ZERO_ROOT,  Load ZERO
                     Output
@@ -148,18 +155,18 @@ for, 	Load amount
                     Output
                     Jump for
 
-amount, DEC 11
-A, DEC 22
-B, DEC 33
-C, DEC 44
-B2, DEC 0
-AC, DEC 0
-ACF, DEC 0
-X, DEC 0
-REP, DEC 0
-ZERO, DEC 0
-ONE, DEC 1
-TWO, DEC 2
-FOUR, DEC 4
-negflagB, DEC 0
-negflagAC, DEC 0
+amount,     DEC 11   / Number of test cases
+A,          DEC 22   / Coefficient a
+B,          DEC 33   / Coefficient b
+C,          DEC 44   / Coefficient c
+B2,         DEC 0    / b^2
+AC,         DEC 0    / a * c
+ACF,        DEC 0    / 4 * a * c
+X,          DEC 0    / Copy of b for squaring
+REP,        DEC 0    / Loop counter for multiplication
+ZERO,       DEC 0
+ONE,        DEC 1
+TWO,        DEC 2
+FOUR,       DEC 4
+negflagB,   DEC 0    / Flag if B was negative
+negflagAC,  DEC 0    / Flag if AC was negative
