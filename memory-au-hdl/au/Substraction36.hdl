@@ -1,0 +1,39 @@
+// -----------------------------------------------------------------------------
+// CHIP: Substraction36
+// Author: Santiago Botero
+// Date: 26/05/2025
+// Description:
+//   This chip performs the subtraction of two 36-bit numbers,
+//   each represented by three 12-bit segments: (in0, in1, in2) for the minuend,
+//   and (sub0, sub1, sub2) for the subtrahend.
+//
+//   The subtraction is implemented by computing the two's complement of the
+//   subtrahend using `Negative36`, and then adding it to the minuend using
+//   `Addition36`.
+//
+//   Inputs:
+//     - in[36]: Minuend, split as in0[12], in1[12], in2[12].
+//     - sub[36]: Subtrahend, split as sub0[12], sub1[12], sub2[12].
+//
+//   Outputs:
+//     - out[36]: Result of the subtraction (in - sub), split as
+//       out0[12], out1[12], out2[12].
+//
+//   Internal Logic:
+//     - Computes the two’s complement of the subtrahend.
+//     - Adds the result to the minuend using a 36-bit adder.
+// -----------------------------------------------------------------------------
+
+CHIP Substraction36 {
+    IN  in0[12], in1[12], in2[12],
+        sub0[12], sub1[12], sub2[12];
+    OUT out0[12], out1[12], out2[12];
+
+    PARTS:
+    Negative36(in0=sub0, in1=sub1, in2=sub2,
+               out0=negSub0, out1=negSub1, out2=negSub2);
+
+    Addition36(in0=in0, in1=in1, in2=in2,
+               add0=negSub0, add1=negSub1, add2=negSub2,
+               out0=out0, out1=out1, out2=out2);
+}

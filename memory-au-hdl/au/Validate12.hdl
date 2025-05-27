@@ -1,0 +1,38 @@
+// -----------------------------------------------------------------------------
+// CHIP: Validate12
+// Author: Santiago Botero
+// Date: 22/05/2025
+// Description:
+//   This chip performs a bitwise AND operation between a 12-bit input vector `in` and
+//   an enable signal `enable`. It is used to conditionally pass the input values to
+//   the output, depending on the value of the `enable` signal.
+//
+//   If `enable` is 1 (true), the input values are passed to the output.
+//   If `enable` is 0 (false), the output is 0 for all bits.
+//
+//   This chip is useful for enabling/disabling certain parts of a circuit depending
+//   on a control signal.
+//
+//   The output vector `out` will reflect the input vector `in` only if `enable` is 1.
+//
+// -----------------------------------------------------------------------------
+
+CHIP Validate12 {
+    IN in[12], enable;      // 12-bit input vector to be validated and an enable signal to control whether input is passed to output
+    OUT out[12];            // 12-bit output vector, will contain `in` if enable is 1, else 0
+
+    PARTS:
+    // Bitwise AND between each bit of the input and the enable signal
+    And(a=in[0], b=enable, out=out[0]);
+    And(a=in[1], b=enable, out=out[1]);
+    And(a=in[2], b=enable, out=out[2]);
+    And(a=in[3], b=enable, out=out[3]);
+    And(a=in[4], b=enable, out=out[4]);
+    And(a=in[5], b=enable, out=out[5]);
+    And(a=in[6], b=enable, out=out[6]);
+    And(a=in[7], b=enable, out=out[7]);
+    And(a=in[8], b=enable, out=out[8]);
+    And(a=in[9], b=enable, out=out[9]);
+    And(a=in[10], b=enable, out=out[10]);
+    And(a=in[11], b=enable, out=out[11]);
+}

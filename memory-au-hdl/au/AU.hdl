@@ -1,0 +1,128 @@
+// -----------------------------------------------------------------------------
+// CHIP: AU (Arithmetic Unit)
+// Author: Santiago Botero
+// Date: 22/05/2025
+// Description:
+//   This chip implements a 36-bit arithmetic unit that performs various operations
+//   based on a 3-bit instruction input (`inst`). It receives three 36-bit input
+//   buses: CIin, Ain, and SLin (each represented internally as three 12-bit segments),
+//   and produces corresponding 36-bit outputs: CIout, Aout, and SLout.
+//
+//   Supported operations include pass-through, addition, subtraction,
+//   negation, conditional addition, and routing.
+//
+//   Inputs:
+//     - CIin[36]: Carry-in input bus, split as CIin0[12], CIin1[12], CIin2[12].
+//     - Ain[36]: A input bus, split as Ain0[12], Ain1[12], Ain2[12].
+//     - SLin[36]: Shift/Load input bus, split as SLin0[12], SLin1[12], SLin2[12].
+//     - inst[3]: 3-bit instruction selector determining the operation.
+//
+//   Outputs:
+//     - CIout[36]: Carry-out result, split as CIout0[12], CIout1[12], CIout2[12].
+//     - Aout[36]: A result output, split as Aout0[12], Aout1[12], Aout2[12].
+//     - SLout[36]: Shift/Load result output, split as SLout0[12], SLout1[12], SLout2[12].
+//
+//   Internal Logic:
+//     - An 8-way demultiplexer decodes the `inst` input to activate a single operation block.
+//     - Each operation computes results using 36-bit logic modules (implemented as 3×12-bit).
+//     - Partial results are masked using `Validate12`, then combined using `Or12` to
+//       produce the final output buses.
+// -----------------------------------------------------------------------------
+
+CHIP AU {
+    IN  CIin2[12], CIin1[12], CIin0[12],    // 36-bit Carry-In input (3 × 12-bit)
+        Ain2[12], Ain1[12], Ain0[12],       // 36-bit A input (3 × 12-bit)
+        SLin2[12], SLin1[12], SLin0[12],    // 36-bit Shift/Load input (3 × 12-bit)
+        inst[3];                            // 3-bit instruction selector
+    OUT CIout2[12], CIout1[12], CIout0[12], // 36-bit Carry-Out output (3 × 12-bit)
+        Aout2[12], Aout1[12], Aout0[12],    // 36-bit A output (3 × 12-bit)
+        SLout2[12], SLout1[12], SLout0[12]; // 36-bit Shift/Load output (3 × 12-bit)
+
+    PARTS:
+        // --- Instruction decoding ---
+        // Use DMux8Way to activate only one of the 8 operations based on `inst`
+        DMux8Way(in=true, sel=inst,
+                a=block0, b=block1, c=block2, d=block3,
+                e=block4, f=block5, g=block6, h=block7);
+
+        // --- inst == 000: SLin -> CIout ---
+        Validate12(in=SLin0, enable=block0, out=tmpCIout00);
+        Validate12(in=SLin1, enable=block0, out=tmpCIout10);
+        Validate12(in=SLin2, enable=block0, out=tmpCIout20);
+
+        // --- inst == 001: CIin + SLin -> CIout ---
+        Addition36(
+            in0=CIin0, in1=CIin1, in2=CIin2,
+            add0=SLin0, add1=SLin1, add2=CIin2,
+            out0=add0, out1=add1, out2=add2
+        );
+
+        Validate12(in=add0, enable=block1, out=tmpCIout01);
+        Validate12(in=add1, enable=block1, out=tmpCIout11);
+        Validate12(in=add2, enable=block1, out=tmpCIout21);
+
+        // --- inst == 010: -SLin -> Aout ---
+        Negative36(in0=SLin0, in1=SLin1, in2=SLin2, out0=neg0, out1=neg1, out2=neg2);
+        Validate12(in=neg0, enable=block2, out=tmpAout00);
+        Validate12(in=neg1, enable=block2, out=tmpAout10);
+        Validate12(in=neg2, enable=block2, out=tmpAout20);
+
+        // --- inst == 011: Ain -> SLout ---
+        Validate12(in=Ain0, enable=block3, out=SLout0);
+        Validate12(in=Ain1, enable=block3, out=SLout1);
+        Validate12(in=Ain2, enable=block3, out=SLout2);
+
+        // --- inst == 100: Ain - SLin -> Aout ---
+        Substraction36(
+            in0=Ain0, in1=Ain1, in2=Ain2,
+            sub0=SLin0, sub1=SLin1, sub2=SLin2,
+            out0=sub00, out1=sub01, out2=sub02
+        );
+        Validate12(in=sub00, enable=block4, out=tmpAout01);
+        Validate12(in=sub01, enable=block4, out=tmpAout11);
+        Validate12(in=sub02, enable=block4, out=tmpAout21);
+
+        // --- inst == 101: Ain - SLin -> Aout (again) ---
+        Substraction36(
+            in0=Ain0, in1=Ain1, in2=Ain2,
+            sub0=SLin0, sub1=SLin1, sub2=SLin2,
+            out0=sub10, out1=sub11, out2=sub12
+        );
+        Validate12(in=sub10, enable=block5, out=tmpAout02);
+        Validate12(in=sub11, enable=block5, out=tmpAout12);
+        Validate12(in=sub12, enable=block5, out=tmpAout22);
+
+        // --- inst == 110: Conditional addition if Ain < 0 ---
+        // Only adds CIin + 1 and outputs to CIout *if* Ain is negative.
+        ConditionalAddition36(
+            con2=Ain0, con1=Ain1, con0=Ain2,
+            in2=CIin0, in1=CIin1, in0=CIin2,
+            out2=ca0, out1=ca1, out0=ca2
+        );
+        Validate12(in=ca0, enable=block6, out=tmpCIout02);
+        Validate12(in=ca1, enable=block6, out=tmpCIout12);
+        Validate12(in=ca2, enable=block6, out=tmpCIout22);
+
+
+        // --- Final output stage ---
+        // Combine partial CIout values using OR gates
+        Or12(a=tmpCIout00, b=tmpCIout01, out=tmp00);
+        Or12(a=tmp00, b=tmpCIout02, out=CIout0);
+
+        Or12(a=tmpCIout10, b=tmpCIout11, out=tmp01);
+        Or12(a=tmp01, b=tmpCIout12, out=CIout1);
+
+        Or12(a=tmpCIout20, b=tmpCIout21, out=tmp02);
+        Or12(a=tmp02, b=tmpCIout22, out=CIout2);
+
+        // Combine partial Aout values using OR gates
+        Or12(a=tmpAout00, b=tmpAout01, out=tmp03);
+        Or12(a=tmp03, b=tmpAout02, out=Aout0);
+
+        Or12(a=tmpAout10, b=tmpAout11, out=tmp04);
+        Or12(a=tmp04, b=tmpAout12, out=Aout1);
+
+        Or12(a=tmpAout20, b=tmpAout21, out=tmp05);
+        Or12(a=tmp05, b=tmpAout22, out=Aout2);
+
+}

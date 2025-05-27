@@ -1,0 +1,34 @@
+// -----------------------------------------------------------------------------
+// CHIP: Mux2
+// Author: Santiago Botero
+// Date: 26/05/2025
+// Description:
+//   This chip implements a basic 2-way, 1-bit multiplexer.
+//   It selects one of two 1-bit input signals (`a` or `b`) based on the value
+//   of the selector input `sel`.
+//
+//   Inputs:
+//     - a: 1-bit input signal.
+//     - b: 1-bit input signal.
+//     - sel: 1-bit selector signal. If sel = 0, output is `a`; if sel = 1, output is `b`.
+//
+//   Output:
+//     - out: 1-bit output signal equal to either `a` or `b` depending on `sel`.
+//
+//   Internal Logic:
+//     - The selector signal is inverted to create a control for selecting `a`.
+//     - AND gates are used to mask either `a` or `b` depending on the selector.
+//     - The final output is computed by OR'ing the masked values.
+//
+// -----------------------------------------------------------------------------
+
+CHIP Mux2 {
+    IN a, b, sel;
+    OUT out;
+
+    PARTS:
+    Not(in=sel, out=notSel);
+    And(a=a, b=notSel, out=andA);
+    And(a=b, b=sel, out=andB);
+    Or(a=andA, b=andB, out=out);
+}

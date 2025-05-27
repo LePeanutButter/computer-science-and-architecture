@@ -1,0 +1,95 @@
+// -----------------------------------------------------------------------------
+// CHIP: RAM32 (32 x 12-bit Random Access Memory)
+// Author: Santiago Botero
+// Date: 24/05/2025
+// Description:
+//   This RAM chip stores 32 words, each 12 bits wide. The address input
+//   selects which word to read or write. The load input enables writing to
+//   the selected word. Internally, the RAM is divided into 4 groups of 8 registers,
+//   with decoders and multiplexers managing selection and output.
+//
+// Inputs:
+//   - address[5]: 5-bit address input to select one of 32 registers.
+//   - in[12]: 12-bit input data to write into the selected register.
+//   - load: Write enable signal; when high, data is stored at the addressed register.
+//
+// Output:
+//   - out[12]: 12-bit output data from the addressed register.
+//
+// Internal structure:
+//   - DMux4Way decodes the top 2 address bits to select one of four groups of 8 registers.
+//   - Within each group, DMux8Way decodes the lower 3 address bits to select the exact register.
+//   - Each register is a 12-bit Reg12 chip.
+//   - Outputs of each group are selected by Mux8Way12, and then the four group outputs are
+//     selected by a final Mux4Way12 to produce the RAM output.
+// -----------------------------------------------------------------------------
+CHIP RAM32 {
+    IN address[5], in[12], load;
+    OUT out[12];
+
+    PARTS:
+    Not(in=true, out=falseBit);
+
+    DMux8Way(in=load,
+             sel[0]=address[3], sel[1]=address[4], sel[2]=falseBit,
+             a=group1, b=group2, c=group3, d=group4,
+             e=group5, f=group6, g=group7, h=group8);
+
+    DMux8Way(in=group1, sel=address[0..2],
+             a=la, b=lb, c=lc, d=ld, e=le, f=lf, g=lg, h=lh);
+    DMux8Way(in=group2, sel=address[0..2],
+             a=li, b=lj, c=lk, d=ll, e=lm, f=ln, g=lo, h=lp);
+    DMux8Way(in=group3, sel=address[0..2],
+             a=lq, b=lr, c=ls, d=lt, e=lu, f=lv, g=lw, h=lx);
+    DMux8Way(in=group4, sel=address[0..2],
+             a=ly, b=lz, c=l00, d=l01, e=l02, f=l03, g=l04, h=l05);
+
+    // Registers in group 1
+    Reg12(in=in, load=la, out=r0);
+    Reg12(in=in, load=lb, out=r1);
+    Reg12(in=in, load=lc, out=r2);
+    Reg12(in=in, load=ld, out=r3);
+    Reg12(in=in, load=le, out=r4);
+    Reg12(in=in, load=lf, out=r5);
+    Reg12(in=in, load=lg, out=r6);
+    Reg12(in=in, load=lh, out=r7);
+
+    // Registers in group 2
+    Reg12(in=in, load=li, out=r8);
+    Reg12(in=in, load=lj, out=r9);
+    Reg12(in=in, load=lk, out=r10);
+    Reg12(in=in, load=ll, out=r11);
+    Reg12(in=in, load=lm, out=r12);
+    Reg12(in=in, load=ln, out=r13);
+    Reg12(in=in, load=lo, out=r14);
+    Reg12(in=in, load=lp, out=r15);
+
+    // Registers in group 3
+    Reg12(in=in, load=lq, out=r16);
+    Reg12(in=in, load=lr, out=r17);
+    Reg12(in=in, load=ls, out=r18);
+    Reg12(in=in, load=lt, out=r19);
+    Reg12(in=in, load=lu, out=r20);
+    Reg12(in=in, load=lv, out=r21);
+    Reg12(in=in, load=lw, out=r22);
+    Reg12(in=in, load=lx, out=r23);
+
+    // Registers in group 4
+    Reg12(in=in, load=ly, out=r24);
+    Reg12(in=in, load=lz, out=r25);
+    Reg12(in=in, load=l00, out=r26);
+    Reg12(in=in, load=l01, out=r27);
+    Reg12(in=in, load=l02, out=r28);
+    Reg12(in=in, load=l03, out=r29);
+    Reg12(in=in, load=l04, out=r30);
+    Reg12(in=in, load=l05, out=r31);
+
+    // Multiplexers to select output from each group based on lower 3 address bits
+    Mux8Way12(a=r0, b=r1, c=r2, d=r3, e=r4, f=r5, g=r6, h=r7, sel=address[0..2], out=outA);
+    Mux8Way12(a=r8, b=r9, c=r10, d=r11, e=r12, f=r13, g=r14, h=r15, sel=address[0..2], out=outB);
+    Mux8Way12(a=r16, b=r17, c=r18, d=r19, e=r20, f=r21, g=r22, h=r23, sel=address[0..2], out=outC);
+    Mux8Way12(a=r24, b=r25, c=r26, d=r27, e=r28, f=r29, g=r30, h=r31, sel=address[0..2], out=outD);
+
+    // Final mux selects which group's output to send to the RAM output
+    Mux4Way12(a=outA, b=outB, c=outC, d=outD, sel=address[3..4], out=out);
+}

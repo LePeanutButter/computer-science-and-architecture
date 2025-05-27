@@ -1,6 +1,6 @@
 # Computer Science And Architecture
 
-This repository contains various scripts, assembly code, and virtual machine installation logs. The materials in this repository aim to help you learn different aspects of programming, system administration, virtualization, and networking. Each folder is focused on a specific area, such as assembly programming, scripting, and virtualization setups.
+This repository contains various scripts, assembly code, hardware description language projects, and virtual machine installation logs. The materials in this repository aim to help you learn different aspects of programming, system administration, virtualization, hardware design, and low-level system concepts. Each folder is focused on a specific area, such as assembly programming, scripting, hardware design, and virtualization setups.
 
 ## Directory Structure
 
@@ -16,7 +16,11 @@ This repository contains various scripts, assembly code, and virtual machine ins
 
 - **`vm-installation-logs/`**: Provides logs of the installation processes for virtual machines, including Slackware Linux, Windows Server, and Solaris, using VirtualBox and VMware Workstation. These logs contain detailed instructions and configurations used to set up each virtual machine.
 
-## Usage
+- **`triangle-classification-assembly/`**: Implements a triangle classification and geometry computation program in ARM and MARIE assembly languages, demonstrating fixed-point arithmetic and low-level geometric computations on resource-constrained environments.
+
+- **`memory-au-hdl/`**: Hardware Description Language (HDL) project implementing core computer architecture components: a Memory Module and an Arithmetic Unit (AU). This project covers synchronous memory design and arithmetic/logical operations on 36-bit data words, tested using simulation tools.
+
+## Usage and Project Descriptions
 
 ### ARM Assembly
 Explore and experiment with ARM assembly programs to understand the low-level operations of ARM processors. These programs will help you get familiar with instruction sets, registers, and memory handling.
@@ -45,6 +49,25 @@ The `vm-installation-logs` folder includes detailed logs of virtual machine inst
 - **Solaris** on VMware Workstation
 
 These logs document every step of the process, including network configuration, disk partitioning, and troubleshooting steps.
+
+### Triangle Classification in Assembly (ARM & MARIE)
+This project demonstrates how to classify triangles and compute their geometric properties using only integer arithmetic and fixed-point numbers in ARM and MARIE assembly languages. It handles input of point coordinates and determines:
+
+- Validity of the triangle
+- Area and perimeter
+- Triangle type by side lengths (Equilateral, Isosceles, Scalene)
+- Triangle type by angles (Right, Acute, Obtuse)
+
+This project is ideal for understanding fixed-point arithmetic and assembly-level geometric computations under constrained instruction sets.
+
+### Simple Computer Simulator – Memory and Arithmetic Unit (HDL)
+This HDL project implements two fundamental computer architecture components:
+
+- **Memory Module**: A 32-location memory unit with 36-bit words, supporting synchronous read/write operations with write-enable control.
+
+- **Arithmetic Unit (AU)**: A unit performing arithmetic and logical operations on 36-bit inputs based on a 3-bit instruction set, including addition, subtraction, negation, and conditional increments.
+
+The project includes simulation test scripts, expected outputs, and usage instructions, showcasing the design of basic hardware building blocks for digital systems using the NAND2Tetris HDL environment.
 
 ## Authors
 **Santiago Botero** - [LePeanutButter](https://github.com/LePeanutButter)

@@ -1,0 +1,41 @@
+// -----------------------------------------------------------------------------
+// CHIP: Mux8Way
+// Author: Santiago Botero
+// Date: 24/05/2025
+// Description:
+//   This chip implements an 8-way 1-bit multiplexer.
+//   It selects one of eight single-bit inputs (a through h) based on a
+//   3-bit selector input (sel), and outputs the selected input bit.
+//
+//   Inputs:
+//     - a, b, c, d, e, f, g, h: Single-bit input lines.
+//     - sel[3]: 3-bit selector input to choose which input to route to the output.
+//
+//   Output:
+//     - out: Single-bit output corresponding to the selected input.
+//
+//   Internal Logic:
+//     - Uses a three-level hierarchy of 2-way multiplexers:
+//       First level: selects between pairs (a/b, c/d, e/f, g/h) based on sel[0].
+//       Second level: selects between pairs of outputs from the first level (ab/cd, ef/gh) based on sel[1].
+//       Third level: selects between the two second-level outputs based on sel[2].
+//
+// -----------------------------------------------------------------------------
+CHIP Mux8Way {
+    IN a, b, c, d, e, f, g, h, sel[3];
+    OUT out;
+
+    PARTS:
+    // First level: 2-way muxes selecting within pairs based on sel[0]
+    Mux2(a=a, b=b, sel=sel[0], out=ab);
+    Mux2(a=c, b=d, sel=sel[0], out=cd);
+    Mux2(a=e, b=f, sel=sel[0], out=ef);
+    Mux2(a=g, b=h, sel=sel[0], out=gh);
+
+    // Second level: 2-way muxes selecting between pairs of first-level outputs based on sel[1]
+    Mux2(a=ab, b=cd, sel=sel[1], out=abcd);
+    Mux2(a=ef, b=gh, sel=sel[1], out=efgh);
+
+    // Third level: final 2-way mux selecting between second-level outputs based on sel[2]
+    Mux2(a=abcd, b=efgh, sel=sel[2], out=out);
+}

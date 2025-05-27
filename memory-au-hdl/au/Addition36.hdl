@@ -1,0 +1,80 @@
+// -----------------------------------------------------------------------------
+// CHIP: Addition36
+// Author: Santiago Botero
+// Date: 22/05/2025
+// Description:
+//   This chip performs the addition of two 36-bit numbers, each split into
+//   three 12-bit segments: in0, in1, in2 and add0, add1, add2.
+//   The output is a 36-bit result divided similarly into out0, out1, out2.
+// -----------------------------------------------------------------------------
+
+CHIP Addition36 {
+    IN  in0[12], in1[12], in2[12],      // First 36-bit number (LSB to MSB)
+        add0[12], add1[12], add2[12];   // Second 36-bit number (LSB to MSB)
+    OUT out0[12], out1[12], out2[12];   // 36-bit sum result (LSB to MSB)
+
+    PARTS:
+    // --- Stage 1: Add in0 and add0 ---
+    FullAdder(a=in0[0],  b=add0[0],  c=false, sum=out0bit0,  carry=c1);
+    FullAdder(a=in0[1],  b=add0[1],  c=c1,    sum=out0bit1,  carry=c2);
+    FullAdder(a=in0[2],  b=add0[2],  c=c2,    sum=out0bit2,  carry=c3);
+    FullAdder(a=in0[3],  b=add0[3],  c=c3,    sum=out0bit3,  carry=c4);
+    FullAdder(a=in0[4],  b=add0[4],  c=c4,    sum=out0bit4,  carry=c5);
+    FullAdder(a=in0[5],  b=add0[5],  c=c5,    sum=out0bit5,  carry=c6);
+    FullAdder(a=in0[6],  b=add0[6],  c=c6,    sum=out0bit6,  carry=c7);
+    FullAdder(a=in0[7],  b=add0[7],  c=c7,    sum=out0bit7,  carry=c8);
+    FullAdder(a=in0[8],  b=add0[8],  c=c8,    sum=out0bit8,  carry=c9);
+    FullAdder(a=in0[9],  b=add0[9],  c=c9,    sum=out0bit9,  carry=c10);
+    FullAdder(a=in0[10], b=add0[10], c=c10,   sum=out0bit10, carry=c11);
+    FullAdder(a=in0[11], b=add0[11], c=c11,   sum=out0bit11, carry=c12);
+
+    // --- Stage 2: Add in1 and add1 with carry from Stage 1 ---
+    FullAdder(a=in1[0],  b=add1[0],  c=c12,   sum=out1bit0,  carry=c13);
+    FullAdder(a=in1[1],  b=add1[1],  c=c13,   sum=out1bit1,  carry=c14);
+    FullAdder(a=in1[2],  b=add1[2],  c=c14,   sum=out1bit2,  carry=c15);
+    FullAdder(a=in1[3],  b=add1[3],  c=c15,   sum=out1bit3,  carry=c16);
+    FullAdder(a=in1[4],  b=add1[4],  c=c16,   sum=out1bit4,  carry=c17);
+    FullAdder(a=in1[5],  b=add1[5],  c=c17,   sum=out1bit5,  carry=c18);
+    FullAdder(a=in1[6],  b=add1[6],  c=c18,   sum=out1bit6,  carry=c19);
+    FullAdder(a=in1[7],  b=add1[7],  c=c19,   sum=out1bit7,  carry=c20);
+    FullAdder(a=in1[8],  b=add1[8],  c=c20,   sum=out1bit8,  carry=c21);
+    FullAdder(a=in1[9],  b=add1[9],  c=c21,   sum=out1bit9,  carry=c22);
+    FullAdder(a=in1[10], b=add1[10], c=c22,   sum=out1bit10, carry=c23);
+    FullAdder(a=in1[11], b=add1[11], c=c23,   sum=out1bit11, carry=c24);
+
+    // --- Stage 3: Add in2 and add2 with carry from Stage 2 ---
+    FullAdder(a=in2[0],  b=add2[0],  c=c24,   sum=out2bit0,  carry=c25);
+    FullAdder(a=in2[1],  b=add2[1],  c=c25,   sum=out2bit1,  carry=c26);
+    FullAdder(a=in2[2],  b=add2[2],  c=c26,   sum=out2bit2,  carry=c27);
+    FullAdder(a=in2[3],  b=add2[3],  c=c27,   sum=out2bit3,  carry=c28);
+    FullAdder(a=in2[4],  b=add2[4],  c=c28,   sum=out2bit4,  carry=c29);
+    FullAdder(a=in2[5],  b=add2[5],  c=c29,   sum=out2bit5,  carry=c30);
+    FullAdder(a=in2[6],  b=add2[6],  c=c30,   sum=out2bit6,  carry=c31);
+    FullAdder(a=in2[7],  b=add2[7],  c=c31,   sum=out2bit7,  carry=c32);
+    FullAdder(a=in2[8],  b=add2[8],  c=c32,   sum=out2bit8,  carry=c33);
+    FullAdder(a=in2[9],  b=add2[9],  c=c33,   sum=out2bit9,  carry=c34);
+    FullAdder(a=in2[10], b=add2[10], c=c34,   sum=out2bit10, carry=c35);
+    FullAdder(a=in2[11], b=add2[11], c=c35,   sum=out2bit11, carry=c36);
+
+    // --- Final Output Mapping (via ORs to ensure proper output formatting) ---
+    Or(a=out0bit0,  b=false, out=out0[0]);   Or(a=out0bit1,  b=false, out=out0[1]);
+    Or(a=out0bit2,  b=false, out=out0[2]);   Or(a=out0bit3,  b=false, out=out0[3]);
+    Or(a=out0bit4,  b=false, out=out0[4]);   Or(a=out0bit5,  b=false, out=out0[5]);
+    Or(a=out0bit6,  b=false, out=out0[6]);   Or(a=out0bit7,  b=false, out=out0[7]);
+    Or(a=out0bit8,  b=false, out=out0[8]);   Or(a=out0bit9,  b=false, out=out0[9]);
+    Or(a=out0bit10, b=false, out=out0[10]);  Or(a=out0bit11, b=false, out=out0[11]);
+
+    Or(a=out1bit0,  b=false, out=out1[0]);   Or(a=out1bit1,  b=false, out=out1[1]);
+    Or(a=out1bit2,  b=false, out=out1[2]);   Or(a=out1bit3,  b=false, out=out1[3]);
+    Or(a=out1bit4,  b=false, out=out1[4]);   Or(a=out1bit5,  b=false, out=out1[5]);
+    Or(a=out1bit6,  b=false, out=out1[6]);   Or(a=out1bit7,  b=false, out=out1[7]);
+    Or(a=out1bit8,  b=false, out=out1[8]);   Or(a=out1bit9,  b=false, out=out1[9]);
+    Or(a=out1bit10, b=false, out=out1[10]);  Or(a=out1bit11, b=false, out=out1[11]);
+
+    Or(a=out2bit0,  b=false, out=out2[0]);   Or(a=out2bit1,  b=false, out=out2[1]);
+    Or(a=out2bit2,  b=false, out=out2[2]);   Or(a=out2bit3,  b=false, out=out2[3]);
+    Or(a=out2bit4,  b=false, out=out2[4]);   Or(a=out2bit5,  b=false, out=out2[5]);
+    Or(a=out2bit6,  b=false, out=out2[6]);   Or(a=out2bit7,  b=false, out=out2[7]);
+    Or(a=out2bit8,  b=false, out=out2[8]);   Or(a=out2bit9,  b=false, out=out2[9]);
+    Or(a=out2bit10, b=false, out=out2[10]);  Or(a=out2bit11, b=false, out=out2[11]);
+}

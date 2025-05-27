@@ -1,0 +1,112 @@
+
+// -----------------------------------------------------------------------------
+// CHIP: ConditionalAddition36
+// Author: Santiago Botero
+// Date: 26/05/2025
+// Description:
+//   This chip performs a conditional addition on 36-bit inputs. If the 36-bit number
+//   formed by concatenating con0, con1, and con2 is negative, then the 36-bit number
+//   formed by in0, in1, and in2 is incremented by one and output. Otherwise, the output
+//   is zero.
+// -----------------------------------------------------------------------------
+
+CHIP ConditionalAddition36 {
+    IN con0[12], con1[12], con2[12],
+        in0[12], in1[12], in2[12];
+    OUT out0[12], out1[12], out2[12];
+
+    PARTS:
+    // Step 1: Determine if the concatenated condition (con0 con1 con2) is negative
+    // The sign bit is the MSB of con0[11]
+    Not(in=con0[11], out=notSign);
+    And(a=con0[11], b=true, out=flag);
+
+    // Step 2: Increment the 36-bit input (in0, in1, in2) by 1 if flag is true
+    // We'll do 36-bit addition: (in0,in1,in2) + 1
+
+    // Increment LSB (in2[0]) by 1 using HalfAdder
+    HalfAdder(a=in2[0], b=true, sum=inc20, carry=c1);
+
+    // FullAdders for the rest bits of in2
+    FullAdder(a=in2[1], b=false, c=c1, sum=inc21, carry=c2);
+    FullAdder(a=in2[2], b=false, c=c2, sum=inc22, carry=c3);
+    FullAdder(a=in2[3], b=false, c=c3, sum=inc23, carry=c4);
+    FullAdder(a=in2[4], b=false, c=c4, sum=inc24, carry=c5);
+    FullAdder(a=in2[5], b=false, c=c5, sum=inc25, carry=c6);
+    FullAdder(a=in2[6], b=false, c=c6, sum=inc26, carry=c7);
+    FullAdder(a=in2[7], b=false, c=c7, sum=inc27, carry=c8);
+    FullAdder(a=in2[8], b=false, c=c8, sum=inc28, carry=c9);
+    FullAdder(a=in2[9], b=false, c=c9, sum=inc29, carry=c10);
+    FullAdder(a=in2[10],b=false, c=c10,sum=inc210,carry=c11);
+    FullAdder(a=in2[11],b=false, c=c11,sum=inc211,carry=c12);
+
+    // FullAdders for in1 bits with carry from in2
+    FullAdder(a=in1[0], b=false, c=c12, sum=inc10, carry=c13);
+    FullAdder(a=in1[1], b=false, c=c13, sum=inc11, carry=c14);
+    FullAdder(a=in1[2], b=false, c=c14, sum=inc12, carry=c15);
+    FullAdder(a=in1[3], b=false, c=c15, sum=inc13, carry=c16);
+    FullAdder(a=in1[4], b=false, c=c16, sum=inc14, carry=c17);
+    FullAdder(a=in1[5], b=false, c=c17, sum=inc15, carry=c18);
+    FullAdder(a=in1[6], b=false, c=c18, sum=inc16, carry=c19);
+    FullAdder(a=in1[7], b=false, c=c19, sum=inc17, carry=c20);
+    FullAdder(a=in1[8], b=false, c=c20, sum=inc18, carry=c21);
+    FullAdder(a=in1[9], b=false, c=c21, sum=inc19, carry=c22);
+    FullAdder(a=in1[10],b=false, c=c22,sum=inc110,carry=c23);
+    FullAdder(a=in1[11],b=false, c=c23,sum=inc111,carry=c24);
+
+    // FullAdders for in0 bits with carry from in1
+    FullAdder(a=in0[0], b=false, c=c24, sum=inc00, carry=c25);
+    FullAdder(a=in0[1], b=false, c=c25, sum=inc01, carry=c26);
+    FullAdder(a=in0[2], b=false, c=c26, sum=inc02, carry=c27);
+    FullAdder(a=in0[3], b=false, c=c27, sum=inc03, carry=c28);
+    FullAdder(a=in0[4], b=false, c=c28, sum=inc04, carry=c29);
+    FullAdder(a=in0[5], b=false, c=c29, sum=inc05, carry=c30);
+    FullAdder(a=in0[6], b=false, c=c30, sum=inc06, carry=c31);
+    FullAdder(a=in0[7], b=false, c=c31, sum=inc07, carry=c32);
+    FullAdder(a=in0[8], b=false, c=c32, sum=inc08, carry=c33);
+    FullAdder(a=in0[9], b=false, c=c33, sum=inc09, carry=c34);
+    FullAdder(a=in0[10],b=false, c=c34, sum=inc010,carry=c35);
+    FullAdder(a=in0[11],b=false, c=c35, sum=inc011,carry=carryOut);
+
+    // Step 3: If flag (negative), out = incremented input; else, zero
+
+    // For each bit, out = flag AND incremented bit
+    And(a=flag, b=inc00, out=out0[0]);
+    And(a=flag, b=inc01, out=out0[1]);
+    And(a=flag, b=inc02, out=out0[2]);
+    And(a=flag, b=inc03, out=out0[3]);
+    And(a=flag, b=inc04, out=out0[4]);
+    And(a=flag, b=inc05, out=out0[5]);
+    And(a=flag, b=inc06, out=out0[6]);
+    And(a=flag, b=inc07, out=out0[7]);
+    And(a=flag, b=inc08, out=out0[8]);
+    And(a=flag, b=inc09, out=out0[9]);
+    And(a=flag, b=inc010,out=out0[10]);
+    And(a=flag, b=inc011,out=out0[11]);
+
+    And(a=flag, b=inc10, out=out1[0]);
+    And(a=flag, b=inc11, out=out1[1]);
+    And(a=flag, b=inc12, out=out1[2]);
+    And(a=flag, b=inc13, out=out1[3]);
+    And(a=flag, b=inc14, out=out1[4]);
+    And(a=flag, b=inc15, out=out1[5]);
+    And(a=flag, b=inc16, out=out1[6]);
+    And(a=flag, b=inc17, out=out1[7]);
+    And(a=flag, b=inc18, out=out1[8]);
+    And(a=flag, b=inc19, out=out1[9]);
+    And(a=flag, b=inc110,out=out1[10]);
+    And(a=flag, b=inc111,out=out1[11]);
+
+    And(a=flag, b=inc20, out=out2[0]);
+    And(a=flag, b=inc21, out=out2[1]);
+    And(a=flag, b=inc22, out=out2[2]);
+    And(a=flag, b=inc23, out=out2[3]);
+    And(a=flag, b=inc24, out=out2[4]);
+    And(a=flag, b=inc25, out=out2[5]);
+    And(a=flag, b=inc26, out=out2[6]);
+    And(a=flag, b=inc27, out=out2[7]);
+    And(a=flag, b=inc28, out=out2[8]);
+    And(a=flag, b=inc29, out=out2[9]);
+    And(a=flag, b=inc210,out=out2[10]);
+    And(a=flag, b=inc211,out=out2[11]);
+}

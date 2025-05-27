@@ -1,0 +1,38 @@
+// -----------------------------------------------------------------------------
+// CHIP: Reg12 (12-bit Register)
+// Author: Santiago Botero
+// Date: 24/05/2025
+// Description:
+//   This chip implements a 12-bit register with a single load control signal.
+//   When the load input is high, the register stores the 12-bit input value `in`.
+//   The stored 12-bit value is available on the output `out`.
+//
+//   Inputs:
+//     - in[12]: The 12-bit input data to be stored.
+//     - load: Control signal that enables loading of the input value into the register.
+//
+//   Output:
+//     - out[12]: The stored 12-bit output value.
+//
+//   Internal Logic:
+//     - Composed of 12 individual 1-bit Bit registers, each controlled by the same load signal.
+//
+// -----------------------------------------------------------------------------
+CHIP Reg12 {
+    IN in[12], load;
+    OUT out[12];
+
+    PARTS:
+    Bit(in=in[0], load=load, out=out[0]);
+    Bit(in=in[1], load=load, out=out[1]);
+    Bit(in=in[2], load=load, out=out[2]);
+    Bit(in=in[3], load=load, out=out[3]);
+    Bit(in=in[4], load=load, out=out[4]);
+    Bit(in=in[5], load=load, out=out[5]);
+    Bit(in=in[6], load=load, out=out[6]);
+    Bit(in=in[7], load=load, out=out[7]);
+    Bit(in=in[8], load=load, out=out[8]);
+    Bit(in=in[9], load=load, out=out[9]);
+    Bit(in=in[10], load=load, out=out[10]);
+    Bit(in=in[11], load=load, out=out[11]);
+}

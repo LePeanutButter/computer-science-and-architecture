@@ -1,0 +1,32 @@
+// -----------------------------------------------------------------------------
+// CHIP: memory_w_input
+// Author: Santiago Botero
+// Date: 24/05/2025
+// Description:
+//   This version of the memory chip accepts 'w' as an input signal.
+//   'w' determines whether the memory should load/write new data from RAM,
+//   and update its internal registers accordingly.
+//
+//   Inputs:
+//     - a[5]: 5-bit address bus to access the RAM location.
+//     - in0[12], in1[12], in2[12]: 12-bit input buses for writing data.
+//     - w: A single-bit input that enables or disables the write/load operation.
+//
+//   Outputs:
+//     - out0[12], out1[12], out2[12]: 12-bit outputs representing synchronized RAM reads.
+// -----------------------------------------------------------------------------
+CHIP memory {
+    IN a[5], in2[12], in1[12], in0[12], w;
+    OUT out2[12], out1[12], out0[12];
+
+    PARTS:
+    // RAM32s: load only when w=1, otherwise just read
+    RAM32(in=in0, load=w, address=a, out=ram0Out);
+    RAM32(in=in1, load=w, address=a, out=ram1Out);
+    RAM32(in=in2, load=w, address=a, out=ram2Out);
+
+    // Always load the latest read output into the output registers (synchronous display)
+    Reg12(in=ram0Out, load=true, out=out0);
+    Reg12(in=ram1Out, load=true, out=out1);
+    Reg12(in=ram2Out, load=true, out=out2);
+}

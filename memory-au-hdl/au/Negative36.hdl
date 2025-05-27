@@ -1,0 +1,55 @@
+// -----------------------------------------------------------------------------
+// CHIP: Negative36
+// Author: Santiago Botero
+// Date: 22/05/2025
+// Description:
+//   Computes the 2's complement of a 36-bit number split into in0, in1, in2
+// -----------------------------------------------------------------------------
+
+CHIP Negative36 {
+    IN  in0[12], in1[12], in2[12];     // 36-bit input (LSB to MSB)
+    OUT out0[12], out1[12], out2[12];  // 36-bit output = ~in + 1
+
+    PARTS:
+    // Step 1: Bitwise NOT of 36 bits
+    Not(in=in0[0],  out=n0);   Not(in=in0[1],  out=n1);   Not(in=in0[2],  out=n2);
+    Not(in=in0[3],  out=n3);   Not(in=in0[4],  out=n4);   Not(in=in0[5],  out=n5);
+    Not(in=in0[6],  out=n6);   Not(in=in0[7],  out=n7);   Not(in=in0[8],  out=n8);
+    Not(in=in0[9],  out=n9);   Not(in=in0[10], out=n10);  Not(in=in0[11], out=n11);
+
+    Not(in=in1[0],  out=n12);  Not(in=in1[1],  out=n13);  Not(in=in1[2],  out=n14);
+    Not(in=in1[3],  out=n15);  Not(in=in1[4],  out=n16);  Not(in=in1[5],  out=n17);
+    Not(in=in1[6],  out=n18);  Not(in=in1[7],  out=n19);  Not(in=in1[8],  out=n20);
+    Not(in=in1[9],  out=n21);  Not(in=in1[10], out=n22);  Not(in=in1[11], out=n23);
+
+    Not(in=in2[0],  out=n24);  Not(in=in2[1],  out=n25);  Not(in=in2[2],  out=n26);
+    Not(in=in2[3],  out=n27);  Not(in=in2[4],  out=n28);  Not(in=in2[5],  out=n29);
+    Not(in=in2[6],  out=n30);  Not(in=in2[7],  out=n31);  Not(in=in2[8],  out=n32);
+    Not(in=in2[9],  out=n33);  Not(in=in2[10], out=n34);  Not(in=in2[11], out=n35);
+
+    // Step 2: Sum (~in) + 1 using Addition36
+    Addition36(
+        in0[0]=n0,  in0[1]=n1,  in0[2]=n2,  in0[3]=n3,  in0[4]=n4,  in0[5]=n5,
+        in0[6]=n6,  in0[7]=n7,  in0[8]=n8,  in0[9]=n9,  in0[10]=n10, in0[11]=n11,
+
+        in1[0]=n12, in1[1]=n13, in1[2]=n14, in1[3]=n15, in1[4]=n16, in1[5]=n17,
+        in1[6]=n18, in1[7]=n19, in1[8]=n20, in1[9]=n21, in1[10]=n22, in1[11]=n23,
+
+        in2[0]=n24, in2[1]=n25, in2[2]=n26, in2[3]=n27, in2[4]=n28, in2[5]=n29,
+        in2[6]=n30, in2[7]=n31, in2[8]=n32, in2[9]=n33, in2[10]=n34, in2[11]=n35,
+
+        add0[0]=true,  add0[1]=false, add0[2]=false, add0[3]=false,
+        add0[4]=false, add0[5]=false, add0[6]=false, add0[7]=false,
+        add0[8]=false, add0[9]=false, add0[10]=false, add0[11]=false,
+
+        add1[0]=false, add1[1]=false, add1[2]=false, add1[3]=false,
+        add1[4]=false, add1[5]=false, add1[6]=false, add1[7]=false,
+        add1[8]=false, add1[9]=false, add1[10]=false, add1[11]=false,
+
+        add2[0]=false, add2[1]=false, add2[2]=false, add2[3]=false,
+        add2[4]=false, add2[5]=false, add2[6]=false, add2[7]=false,
+        add2[8]=false, add2[9]=false, add2[10]=false, add2[11]=false,
+
+        out0=out0, out1=out1, out2=out2
+    );
+}
