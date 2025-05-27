@@ -70,7 +70,7 @@ Use one of the MARIE simulators:
 To assemble and execute the ARM program in a Raspberry Pi OS environment:
 
 ```bash
-$ s -g -mfpu=vfpv2 -o triangle-classification.o triangle-classification.s
+$ as -g -mfpu=vfpv2 -o triangle-classification.o triangle-classification.s
 $ gcc -o triangle-classification triangle-classification.o
 $ ./triangle-classification
 ```
